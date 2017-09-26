@@ -13,11 +13,11 @@ var windowHalfY = height / 2;
 
 var controls;
 var raycaster;
-var mouse = new THREE.Vector2(), INTERSECTED;
+var INTERSECTED;
+var mouse = new THREE.Vector2();
 
 init();
 animate();
-
 
 function init() {
     camera = new THREE.PerspectiveCamera(70, width / height, 1, 1000);
@@ -100,23 +100,16 @@ function init() {
     circle.rotation.x = -Math.PI * 0.5;
     group.add(circle);
 
-    /*
-    group = new THREE.Object3D();//create an empty container
-    group.add( mesh );//add a mesh with geometry to it
-    scene.add( group );//when done, add the group to the scene
-    */
     scene.add(group);
 
     raycaster = new THREE.Raycaster();
 
     renderer = new THREE.WebGLRenderer();
-    //renderer.context.disable(renderer.context.DEPTH_TEST)
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(width, height);
-    //renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    document.addEventListener('mousemove', onDocumentMouseMove, false);
+    renderer.domElement.addEventListener('mousemove', onDocumentMouseMove, false);
 
     //--Orbit controls
     controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -126,6 +119,12 @@ function init() {
     controls.enableZoom = true;
 
     console.log("scene.children", scene.children);
+
+    var size = 10;
+    var divisions = 10;
+    
+    var gridHelper = new THREE.GridHelper( size, divisions );
+
 }
 
 function render() {
@@ -133,10 +132,8 @@ function render() {
     //camera.updateMatrixWorld();
 
     raycaster.setFromCamera(mouse, camera);
-
     var intersects = raycaster.intersectObjects(loadedObj.children);
     
-
     if (intersects.length > 0) {
         //console.log("intersected", intersects);
 
@@ -147,13 +144,12 @@ function render() {
             INTERSECTED = intersects[0].object;
             INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
             INTERSECTED.material.color.setHex(0x00FF00);
-            INTERSECTED.position.x+=0.5;
-            //INTERSECTED.scale.set(2,2,2);
+            
         }
+
     } else {
         if (INTERSECTED){
             INTERSECTED.material.color.setHex(INTERSECTED.currentHex);
-            //INTERSECTED.scale.set(0.5,0.5,0.5);
         } 
         INTERSECTED = null;
     }
@@ -161,15 +157,9 @@ function render() {
     renderer.render(scene, camera);
 }
 
-//Html buttons
-function RotationLeft() {
-    rotation -= 0.1;
-}
+//console.log("Selected", INTERSECTED);
 
-function RotationRight() {
-    rotation += 0.1;
-}
-
+console.log("Previous selection", INTERSECTED);
 function ShowHideCube() {
     cube.visible = !cube.visible;
 }
@@ -203,7 +193,7 @@ function animate() {
 
         requestAnimationFrame(animate);
 
-    }, 1000 / 30);
+    }, 1000 / 30); //forcing 30FPS
 
     controls.update();
     render();
