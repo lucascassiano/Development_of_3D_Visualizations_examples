@@ -16,8 +16,9 @@ class App extends Component {
   render() {
 
     return (
-      <div className="App">
-        <ObjViewer />
+      <div className = "view3d">
+        <ObjViewer  objPath="./models/heart.obj" mtlPath="./models/heart.mtl" width={800} height={600}/>
+        
       </div>
     );
   }

@@ -119,8 +119,6 @@ function init() {
         this.removeEventListener("mousemove", onMouseMove);
     });
 
-
-    //renderer.render(scene, camera);
 }
 
 
